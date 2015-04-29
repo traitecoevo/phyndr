@@ -1,0 +1,10 @@
+Package: phyndr
+Title: Matches Tip and Trait Data
+Version: 0.1.0
+Description: Match tip and trait data
+Depends: R (>= 3.1.2)
+License: BSD_2_clause + file LICENSE
+LazyData: true
+Author: Rich FitzJohn, Matt Pennell and Will Cornwell
+Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
+Suggests: testthat
