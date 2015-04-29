@@ -8,3 +8,4 @@ LazyData: true
 Author: Rich FitzJohn, Matt Pennell and Will Cornwell
 Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
 Suggests: testthat
+Imports: ape, diversitree
