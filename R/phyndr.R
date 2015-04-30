@@ -106,7 +106,31 @@ phyndr_genus <- function(phy, data_species) {
 ## Assumption is that the rownames of taxonomy includes all species
 ## names that are in phy and data_species, then each column we have
 ## increasing taxonomic nesting.
+
+##' Taxonomic method of phyndr that works with generalised sets of
+##' taxonomic information.  Requires a nested set of taxonomic classes
+##' (e.g, genus, family, order, etc) but does not assume that these
+##' classes are necessarily monophyletic.
+##' @title Phyndr taxonomic
+##' @param phy An ape phylogeny
+##' @param data_species A vector of species names for which we have
+##' trait data.  Species names in both the tree and in this vector
+##' must be separated with underscores, not with spaces.
+##' @param taxonomy A data.frame with taxonomic information.  Row
+##' names must be present and must list every species in \code{phy}
+##' and every species in \code{data_species}.  One or more columns
+##' must be present; the first column is the lowest (finest) taxonomic
+##' grouping and the last column is the highest (coarsest) taxonomic
+##' grouping.  The names are arbitrary but will be used in creating
+##' mangled names in the resulting phylogeny.
+##' @export
 phyndr_taxonomy <- function(phy, data_species, taxonomy) {
+  ## TODO: check
+  ##   - taxonomy is a data.frame
+  ##   - has row labels
+  ##   - has unique column labels
+  ##   - has at least one column
+  ##   - has a tree structure?
   msg <- setdiff(phy$tip.label, rownames(taxonomy))
   if (length(msg) > 0L) {
     stop("Species in phy missing taxonomic information: ",
