@@ -32,8 +32,7 @@ find_exclusive_clade <- function(tip, exclude, phy) {
         ## Hit the root:
         return(ret)
       }
-      desc <- phy$tip.label[diversitree::get.descendants(i_parent, phy,
-                                                         tips.only=TRUE)]
+      desc <- get_descendants(i_parent, phy)
       if (any(desc %in% exclude)) {
         return(ret)
       }
@@ -44,6 +43,7 @@ find_exclusive_clade <- function(tip, exclude, phy) {
   }
 }
 
+##' @importFrom diversitree get.descendants
 get_descendants <- function(node, phy) {
   phy$tip.label[diversitree::get.descendants(node, phy, tips.only=TRUE)]
 }

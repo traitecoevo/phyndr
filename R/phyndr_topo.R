@@ -81,11 +81,9 @@ phyndr_topo <- function(phy, data_species, topo) {
   nodes <- nc > 1L & !is_tip
   nodes_keep <- vcapply(desc[nodes], "[[", 1L)
   nodes_drop <- unlist(lapply(desc[nodes], "[", -1L))
-  nodes_cand <- candidates[nodes]
-  names(nodes_cand) <- nodes_keep
+  nodes_cand <- setNames(candidates[nodes], nodes_keep)
 
-  tips_cand <- candidates[is_tip]
-  names(tips_cand) <- phy$tip.label
+  tips_cand <- setNames(candidates[is_tip], phy$tip.label)
 
   to_drop <- setdiff(union(nodes_drop, to_drop_tips), nodes_keep)
 
