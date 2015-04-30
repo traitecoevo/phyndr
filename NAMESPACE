@@ -2,6 +2,6 @@
 
 export(phyndr_genus)
 export(phyndr_taxonomy)
-export(phyndr_topo)
+export(phyndr_topology)
 import(ape)
 importFrom(diversitree,get.descendants)

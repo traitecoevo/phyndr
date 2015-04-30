@@ -4,22 +4,22 @@
 ##' @param data_species A vector of species names for which we have
 ##' trait data.  Species names in both the tree and in this vector
 ##' must be separated with underscores, not with spaces.
-##' @param topo A topological tree used to determine patterns of
+##' @param topology A topological tree used to determine patterns of
 ##' relatedness among species in \code{phy}.  The better resolved this
 ##' tree is and the better the overlap it has with \code{phy} and
 ##' \code{data_species} the more useful this will be.  Branch length
 ##' information is not used.
 ##' @export
-phyndr_topo <- function(phy, data_species, topo) {
+phyndr_topology <- function(phy, data_species, topology) {
   ## First, discard all species that are in the time tree but not in
   ## the topo tree and don't have data as these cannot be used.  I
   ## feel we could discard more than this (think of the case of a
   ## single data point) but perhaps that can't be done.
-  to_drop <- setdiff(phy$tip.label, union(data_species, topo$tip.label))
+  to_drop <- setdiff(phy$tip.label, union(data_species, topology$tip.label))
   phy <- drop_tip(phy, to_drop)
 
-  to_drop <- setdiff(topo$tip.label, union(data_species, phy$tip.label))
-  topo <- drop_tip(topo, to_drop)
+  to_drop <- setdiff(topology$tip.label, union(data_species, phy$tip.label))
+  topology <- drop_tip(topology, to_drop)
 
   ## Organise the time tree into postorder because we'll need that:
   phy <- reorder(phy, "postorder")
@@ -40,7 +40,7 @@ phyndr_topo <- function(phy, data_species, topo) {
   ## not include any other species in the time tree.
   phy_nodata <- setdiff(phy$tip.label, data_species)
 
-  tmp <- lapply(phy_nodata, find_exclusive_clade, phy$tip.label, topo)
+  tmp <- lapply(phy_nodata, find_exclusive_clade, phy$tip.label, topology)
   candidates[match(phy_nodata, phy$tip.label)] <-
     lapply(tmp, "[[", "species")
 
@@ -55,12 +55,12 @@ phyndr_topo <- function(phy, data_species, topo) {
       desc[[nd]] <- unlist(desc[nd_d])
       ## Is it possible that we'll only hit a single species in the
       ## tree?  I hope not!  Might be worth checking though.
-      topo_mrca <- ape::getMRCA(topo, desc[[nd]])
+      topo_mrca <- ape::getMRCA(topology, desc[[nd]])
       if (is.null(topo_mrca)) {
         ## Unlikely to be triggered...
         stop("Error reconciling trees")
       }
-      topo_desc <- get_descendants(topo_mrca, topo)
+      topo_desc <- get_descendants(topo_mrca, topology)
       if (any(complete[match(topo_desc, phy$tip.label)], na.rm=TRUE)) {
         complete[[nd]] <- TRUE
       } else {
