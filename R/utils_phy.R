@@ -15,3 +15,35 @@ find_paraphyletic <- function(group, table, phy) {
   desc <- diversitree::get.descendants(mrca, phy, tips.only=TRUE)
   setdiff(table[desc], group)
 }
+
+## Find the largest clade in phy that includes the tip species `tip`
+## but does not include any species listed in the vector `exclude`.
+find_exclusive_clade <- function(tip, exclude, phy) {
+  i <- match(tip, phy$tip.label)
+  if (is.na(i)) {
+    character(0)
+  } else {
+    ret <- list(species=tip, node=i)
+    exclude <- setdiff(exclude, tip)
+
+    repeat {
+      i_parent <- phy$edge[match(i, phy$edge[, 2]), 1]
+      if (is.na(i_parent)) {
+        ## Hit the root:
+        return(ret)
+      }
+      desc <- phy$tip.label[diversitree::get.descendants(i_parent, phy,
+                                                         tips.only=TRUE)]
+      if (any(desc %in% exclude)) {
+        return(ret)
+      }
+
+      i <- i_parent
+      ret <- list(species=desc, node=i)
+    }
+  }
+}
+
+get_descendants <- function(node, phy) {
+  phy$tip.label[diversitree::get.descendants(node, phy, tips.only=TRUE)]
+}
