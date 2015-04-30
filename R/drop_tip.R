@@ -1,6 +1,9 @@
 ##' @import ape
 drop_tip <- function(phy, tip, trim.internal = TRUE, subtree = FALSE,
                      root.edge = 0, rooted = is.rooted(phy)) {
+  if (length(tip) == 0L) {
+    return(phy)
+  }
   if (!inherits(phy, "phylo"))
     stop("object \"phy\" is not of class \"phylo\"")
   Ntip <- length(phy$tip.label)

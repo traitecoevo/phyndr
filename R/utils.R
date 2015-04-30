@@ -10,3 +10,7 @@ vnapply <- function(X, FUN, ...) {
 vcapply <- function(X, FUN, ...) {
   vapply(X, FUN, character(1), ...)
 }
+
+pastec <- function(...) {
+  paste(..., collapse=", ")
+}

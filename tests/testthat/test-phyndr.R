@@ -5,12 +5,13 @@ if (FALSE) {
   families <- c("Araucariaceae", "Cephalotaxaceae", "Cupressaceae",
                 "Pinaceae", "Podocarpaceae", "Taxaceae")
   taxize::tpl_get("tpl", families)
+
   files <- dir("tpl", full.names=TRUE)
   dat <- do.call("rbind", lapply(files, read.csv, stringsAsFactors=FALSE))
-  write.csv(dat[c("Genus", "Species", "Family")], "pinales.csv",
+  dat <- dat[!duplicated(paste(dat$Genus, dat$Species)),
+             c("Species", "Genus", "Family")]
+  write.csv(dat[c("Species", "Genus", "Family")], "pinales.csv",
             row.names=FALSE)
-
-  dat$gs <- paste(dat$Genus, dat$Species, sep="_")
 
   ## A set of species to use:
   set.seed(1)
@@ -44,4 +45,24 @@ test_that("regression", {
       ifelse(viapply(phy2$clades, length) > 0L, "blue", "red")
     plot(phy2, type="fan", no.margin=TRUE, cex=.5, tip.color=col)
   }
+})
+
+test_that("taxonomy", {
+  phy <- read.tree("pinales.tre")
+  data_species <- readLines("pinales_sub.txt")
+
+  dat <- read.csv("pinales.csv", stringsAsFactors=FALSE)
+  rownames(dat) <- paste(dat$Genus, dat$Species, sep="_")
+  dat <- dat[c("Genus", "Family")]
+
+  ## Some species that aren't in the lookup but are in the tree:
+  extra <- setdiff(phy$tip.label, rownames(dat))
+  extra_genus <- split_genus(extra)
+  tmp <- dat[match(extra_genus, dat$Genus), ]
+  rownames(tmp) <- extra
+  dat2 <- rbind(dat, tmp)
+
+  phy2 <- phyndr_taxonomy(phy, data_species, dat2)
+  expect_that(length(phy2$tip.label), equals(20))
+  expect_that(length(phy2$clades), equals(2))
 })

@@ -93,3 +93,130 @@ phyndr_genus <- function(phy, data_species) {
   class(phy2) <- c("phyndr", class(phy2))
   phy2
 }
+
+## Generalise the approach a bit by using a set of taxonomic lookups.
+## This will replace the above function with something that
+## *generates* the taxonomy by assuming genera if it's not given/is
+## NULL.
+##
+## There are two sources of data needed here: one is the nested set of
+## taxonomy (e.g., genus/family/order) and the other is to connect
+## from the *species names* to genus.
+##
+## Assumption is that the rownames of taxonomy includes all species
+## names that are in phy and data_species, then each column we have
+## increasing taxonomic nesting.
+phyndr_taxonomy <- function(phy, data_species, taxonomy) {
+  msg <- setdiff(phy$tip.label, rownames(taxonomy))
+  if (length(msg) > 0L) {
+    stop("Species in phy missing taxonomic information: ",
+         pastec(msg))
+  }
+  msg <- setdiff(data_species, rownames(taxonomy))
+  if (length(msg) > 0L) {
+    stop("Species in data_species missing taxonomic information: ",
+         pastec(msg))
+  }
+
+  ## This is the recursive exit condition:
+  if (ncol(taxonomy) < 1L) {
+    return(phy)
+  }
+  ## Nothing can be done here:
+  if (all(phy$tip.label %in% data_species)) {
+    return(phy)
+  }
+
+  phy_g <- taxonomy[phy$tip.label, 1, drop=TRUE]
+  dat_g <- taxonomy[data_species,  1, drop=TRUE]
+
+  ## I don't think we want to run the whole way down the taxonomy
+  ## straight away here.
+  ##
+  ## If there are unmatched species in the same genus as things that
+  ## have data already, those get discarded from the tree as there's
+  ## nothing that we can do.  We do keep other genera though, even if
+  ## they're in a family that we have matches for so that implies that
+  ## we don't roll back more than the first taxonomic grouping.
+  match_s <- phy$tip.label %in% data_species
+
+  ## On the second way around here we have to be more careful; most
+  ## tips are actually ok by now.
+  ## This one is wrong because it's against the wrong tree.  Here we
+  ## need to know what group things belong to.  That means updating
+  ## all the book-keeping so that's a pain.  Easiest way would be to
+  ## append rows to the table and rematch.
+  match_g <- phy_g %in% unique(phy_g[match_s])
+  to_drop <- match_g & !match_s
+
+  phy2 <- drop_tip(phy, phy$tip.label[to_drop])
+
+  ## These are groups in the tree which did not match any species:
+  phy_g_msg <- unique(phy_g[!match_g])
+
+  ## Of these, these are the ones that have no data, so we don't want to
+  ## go crazy with them.
+  phy_g_msg_nodata <- setdiff(phy_g_msg, dat_g)
+  ## and ones with data:
+  phy_g_msg_data <- intersect(phy_g_msg, dat_g)
+
+  ## Test missing genera to detemine which are monophyletic:
+  phy_g_msg_data_is_mono <-
+    vlapply(phy_g_msg_data, is_monophyletic_group, phy_g, phy)
+  phy_g_msg_data_mono <- phy_g_msg_data[phy_g_msg_data_is_mono]
+
+  ## Then, of the ones that aren't, which can be fixed?
+  check <- phy_g_msg_data[!phy_g_msg_data_is_mono]
+  problems <- lapply(check, find_paraphyletic, phy_g, phy)
+  can_fix <- vlapply(problems, function(x) all(x %in% phy_g_msg_nodata))
+  phy_g_msg_data_fixable <- check[can_fix]
+
+  ## Then, of the things with no data and which we don't drop above
+  phy_g_msg_nodata_is_mono <- logical(length(phy_g_msg_nodata))
+  names(phy_g_msg_nodata_is_mono) <- phy_g_msg_nodata
+  check <- setdiff(phy_g_msg_nodata, problems)
+  phy_g_msg_nodata_is_mono[check] <-
+    vlapply(check, is_monophyletic_group, phy_g, phy)
+  phy_g_msg_nodata_mono <- phy_g_msg_nodata[phy_g_msg_nodata_is_mono]
+
+  g_collapse <- c(phy_g_msg_data_mono,
+                  phy_g_msg_data_fixable,
+                  phy_g_msg_nodata_mono)
+  g_drop <- unname(unlist(problems[can_fix]))
+
+  tmp <- split(phy$tip.label, phy_g)
+  to_drop <- c(unlist(lapply(tmp[g_collapse],
+                             function(x) x[-1]), use.names=FALSE),
+               unlist(tmp[g_drop], use.names=FALSE))
+
+  relabel <- vcapply(tmp[g_collapse], function(x) x[[1]])
+  names(relabel) <- sprintf("%s::%s", names(taxonomy)[[1]], names(relabel))
+
+  taxonomy_extra <- taxonomy[match(g_collapse, taxonomy[[1]]), -1, drop=FALSE]
+  rownames(taxonomy_extra) <- names(relabel)
+  if (nrow(taxonomy_extra) > 0L) {
+    taxonomy2 <- rbind(taxonomy[, -1, drop=FALSE], taxonomy_extra)
+  } else {
+    taxonomy2 <- taxonomy[, -1, drop=FALSE]
+  }
+
+  phy2 <- drop_tip(phy2, to_drop)
+  phy2$tip.label[match(relabel, phy2$tip.label)] <- names(relabel)
+
+  ## Now, assemble the list of plausible matches:
+  tmp <- split(data_species, dat_g)
+  clades <- setNames(tmp[g_collapse], names(relabel))
+
+  data_species2 <- c(data_species,
+                     names(clades)[viapply(clades, length) > 0L])
+
+  phy2$clades <- c(phy2$clades, clades)
+  phy2$clades <- phy2$clades[names(phy2$clades) %in% phy2$tip.label]
+
+  if (!inherits(phy2, "phyndr")) {
+    class(phy2) <- c("phyndr", class(phy2))
+  }
+
+  ## Let's recurse!
+  phyndr_taxonomy(phy2, data_species2, taxonomy2)
+}
