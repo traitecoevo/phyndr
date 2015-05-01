@@ -42,28 +42,6 @@
 ##' mangled names in the resulting phylogeny.
 ##' @export
 phyndr_taxonomy <- function(phy, data_species, taxonomy) {
-  ## TODO: check
-  ##   - taxonomy is a data.frame
-  ##   - has row labels
-  ##   - has unique column labels
-  ##   - has at least one column
-  ##   - has a tree structure?
-  msg <- setdiff(phy$tip.label, rownames(taxonomy))
-  if (length(msg) > 0L) {
-    stop("Species in phy missing taxonomic information: ",
-         pastec(msg))
-  }
-  msg <- setdiff(data_species, rownames(taxonomy))
-  if (length(msg) > 0L) {
-    stop("Species in data_species missing taxonomic information: ",
-         pastec(msg))
-  }
-
-  ## This is the recursive exit condition:
-  if (ncol(taxonomy) < 1L || all(phy$tip.label %in% data_species)) {
-    return(phyndr_taxonomy_cleanup(phy, data_species))
-  }
-
   ## Might be worth doing an initial round of cleaning here.
   ## We only need species in the lookup that are in the taxonomy and
   ## in the tree.
@@ -72,6 +50,31 @@ phyndr_taxonomy <- function(phy, data_species, taxonomy) {
 
   to_drop <- setdiff(rownames(taxonomy), union(data_species, phy$tip.label))
   taxonomy <- taxonomy[setdiff(rownames(taxonomy), to_drop), , drop=FALSE]
+
+  to_drop <- setdiff(data_species, union(phy$tip.label, rownames(taxonomy)))
+  data_species <- setdiff(data_species, to_drop)
+
+  ## TODO: check
+  ##   - taxonomy is a data.frame
+  ##   - has row labels
+  ##   - has unique column labels
+  ##   - has at least one column
+  ##   - has a tree structure?
+
+  ## This is the recursive exit condition:
+  if (ncol(taxonomy) < 1L || all(phy$tip.label %in% data_species)) {
+    return(phyndr_taxonomy_cleanup(phy, data_species))
+  }
+
+  msg <- setdiff(phy$tip.label, rownames(taxonomy))
+  if (length(msg) > 0L) {
+    extra <- taxonomy[msg, , drop=FALSE]
+    rownames(extra) <- msg
+    for (i in names(extra)) {
+      extra[[i]] <- sprintf("Unknown-%s-%s", i, msg)
+    }
+    taxonomy <- rbind(taxonomy, extra)
+  }
 
   phy_g <- taxonomy[phy$tip.label, 1, drop=TRUE]
   dat_g <- taxonomy[data_species,  1, drop=TRUE]
