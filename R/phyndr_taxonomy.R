@@ -64,6 +64,15 @@ phyndr_taxonomy <- function(phy, data_species, taxonomy) {
     return(phyndr_taxonomy_cleanup(phy, data_species))
   }
 
+  ## Might be worth doing an initial round of cleaning here.
+  ## We only need species in the lookup that are in the taxonomy and
+  ## in the tree.
+  to_drop <- setdiff(phy$tip.label, union(data_species, rownames(taxonomy)))
+  phy <- drop_tip(phy, to_drop)
+
+  to_drop <- setdiff(rownames(taxonomy), union(data_species, phy$tip.label))
+  taxonomy <- taxonomy[setdiff(rownames(taxonomy), to_drop), , drop=FALSE]
+
   phy_g <- taxonomy[phy$tip.label, 1, drop=TRUE]
   dat_g <- taxonomy[data_species,  1, drop=TRUE]
 
@@ -98,6 +107,8 @@ phyndr_taxonomy <- function(phy, data_species, taxonomy) {
   phy_g_msg_data <- intersect(phy_g_msg, dat_g)
 
   ## Test missing genera to detemine which are monophyletic:
+  ## TODO: This is really slow on very large trees, so that's not
+  ## great.
   phy_g_msg_data_is_mono <-
     vlapply(phy_g_msg_data, is_monophyletic_group, phy_g, phy)
   phy_g_msg_data_mono <- phy_g_msg_data[phy_g_msg_data_is_mono]

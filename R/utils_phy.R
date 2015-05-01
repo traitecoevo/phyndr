@@ -3,8 +3,20 @@ split_genus <- function(str) {
   vcapply(str_split, "[[", 1L)
 }
 
+## Ape's version is too slow; this is around 10x faster.
+is_monophyletic <- function(phy, tips) {
+  if (length(tips) == 1L) {
+    TRUE
+  } else {
+    tips_i <- match(tips, phy$tip.label)
+    mrca <- diversitree:::mrca.tipset(phy, tips_i)
+    desc <- diversitree::get.descendants(mrca, phy, tips.only=TRUE)
+    all(desc %in% tips_i)
+  }
+}
+
 is_monophyletic_group <- function(group, table, phy) {
-  is.monophyletic(phy, phy$tip.label[table == group])
+  is_monophyletic(phy, phy$tip.label[table == group])
 }
 
 ## Find the things that make a group non-monophyletic
