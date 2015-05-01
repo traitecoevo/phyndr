@@ -61,7 +61,7 @@ phyndr_taxonomy <- function(phy, data_species, taxonomy) {
 
   ## This is the recursive exit condition:
   if (ncol(taxonomy) < 1L || all(phy$tip.label %in% data_species)) {
-    return(phyndr_taxonomy_cleanup(phy))
+    return(phyndr_taxonomy_cleanup(phy, data_species))
   }
 
   phy_g <- taxonomy[phy$tip.label, 1, drop=TRUE]
