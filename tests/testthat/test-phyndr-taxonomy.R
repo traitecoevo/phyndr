@@ -1,4 +1,4 @@
-context("phyndr")
+context("phyndr_taxonomy")
 
 ## This is how the data were generated:
 if (FALSE) {
@@ -37,7 +37,7 @@ test_that("regression", {
 
   expect_that(all(names(phy2$clades) %in% phy2$tip.label), is_true())
 
-  expect_that(length(phy2$tip.label), equals(24))
+  expect_that(length(phy2$tip.label), equals(20))
 
   if (FALSE) {
     col <- setNames(rep("black", length(phy2$tip.label)), phy2$tip.label)
@@ -65,4 +65,33 @@ test_that("taxonomy", {
   phy2 <- phyndr_taxonomy(phy, data_species, dat2)
   expect_that(length(phy2$tip.label), equals(20))
   expect_that(length(phy2$clades), equals(2))
+})
+
+test_that("corner case", {
+  ## https://github.com/richfitz/phyndr/issues/5
+
+  t_str <- "(C_a:2.509256702,((B_a:1.246000031,(A_a:1.217375313,B_b:1.217375313)nd5:0.02862471784)nd3:0.7612144472,(A_b:0.703935084,A_c:0.703935084)nd4:1.303279394)nd2:0.5020422246)nd1;"
+  t <- ape::read.tree(text=t_str)
+
+  ## If only have data for one species of B and C, then phyndr_genus
+  ## will correctly return a two taxon tree containing a
+  ## representative from B and C
+  d_1 <- c("C_x", "B_x")
+  res_1 <- phyndr_genus(t, d_1)
+  expect_that(length(res_1$tip.label), equals(2L))
+  expect_that(sort(res_1$tip.label), equals(c("genus::B", "genus::C")))
+
+  ## If we don't have any data for A or B, then it should return a
+  ## tree with only 1 tip, but it returns the original tree
+  d_2 <- c("C_x")
+  expect_that(res_2 <- phyndr_genus(t, d_2),
+              throws_error("Only one species/clade in tree: genus::C"))
+
+  t2_str <- "(D_a:1.893702895,(C_a:1.492379389,(B_a:1.34277546,(A_a:0.7803371973,(B_b:0.24427762,(A_b:0.06128815295,A_c:0.06128815295)nd6:0.182989467)nd5:0.5360595774)nd4:0.5624382631)nd3:0.1496039284)nd2:0.4013235061)nd1;"
+  t2 <- ape::read.tree(text=t2_str)
+
+  res_3 <- phyndr_genus(t2, c("D_a", "C_x"))
+  expect_that(length(res_3$tip.label), equals(2))
+  expect_that(sort(res_3$tip.label),
+              equals(sort(c("D_a", "genus::C"))))
 })

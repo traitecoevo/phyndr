@@ -60,12 +60,8 @@ phyndr_taxonomy <- function(phy, data_species, taxonomy) {
   }
 
   ## This is the recursive exit condition:
-  if (ncol(taxonomy) < 1L) {
-    return(phy)
-  }
-  ## Nothing can be done here:
-  if (all(phy$tip.label %in% data_species)) {
-    return(phy)
+  if (ncol(taxonomy) < 1L || all(phy$tip.label %in% data_species)) {
+    return(phyndr_taxonomy_cleanup(phy))
   }
 
   phy_g <- taxonomy[phy$tip.label, 1, drop=TRUE]
@@ -158,10 +154,11 @@ phyndr_taxonomy <- function(phy, data_species, taxonomy) {
     class(phy2) <- c("phyndr", class(phy2))
   }
 
-  ## Let's recurse!
   if (ncol(taxonomy_extra) == 0) {
-    phy2
+    ## All done!
+    phyndr_taxonomy_cleanup(phy2, data_species2)
   } else {
+    ## Let's recurse!
     phyndr_taxonomy(phy2, data_species2, taxonomy2)
   }
 }
@@ -173,4 +170,18 @@ phyndr_genus <- function(phy, data_species) {
   taxonomy <- data.frame(genus=split_genus(spp))
   rownames(taxonomy) <- spp
   phyndr_taxonomy(phy, data_species, taxonomy)
+}
+
+phyndr_taxonomy_cleanup <- function(phy, data_species) {
+  to_drop <- setdiff(phy$tip.label, data_species)
+  if (length(to_drop) > (length(phy$tip.label) - 2L)) {
+    keep <- intersect(phy$tip.label, data_species)
+    if (length(keep) == 0L) {
+      stop("Zero overlap in data_species and phy")
+    } else {
+      stop("Only one species/clade in tree: ", keep)
+    }
+  }
+  phy$clades <- phy$clades[names(phy$clades) %in% data_species]
+  drop_tip(phy, to_drop)
 }
