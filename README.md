@@ -26,3 +26,18 @@ All nodes (including tips) have a "candidate set" of possible tips; these are sp
     - otherwise grow the candidate set to include the descendant nodes candidate set, and then clear the descendant node candidate sets.
   - This process leaves all species that can be used (are in the union of the chronogram and the data set) in exactly one candidate set, and every node will be complete.
 * Drop all tips with an empty candidate set
+
+## Taxonomy
+
+Start with a table of taxonomic information; row names are the tip labels in the tree; each column is an increasing taxonomic level (e.g., genus, family, order) that are perfectly nested.  Let a "group" be all species at an instance of a taxonomic level (may or may not be a clade)
+
+For each taxonomic level in decreasing order
+  - Match species in the tree to the data; these species are fixed
+  - Drop all species that are in the same "group" as species that have data but which do not have trait data.
+  - For each "group" without data, identify if they are monophyletic (i.e., the species in the group form a clade to the exclusion of all other species in the tree)
+  - If the "group" contains at least one member with data:
+    - If the "group" is monophyletic collapse into a single tip
+    - Otherwise, determine if the group can be *made* monophyletic by dropping other groups that do not have data and if so drop those groups and collapse the focal group
+  - Otherwise (groups with no data), and if the group survived being dropped above:
+    - if the group is monophyletic, collapse into a single tip
+    - otherwise leave it alone
