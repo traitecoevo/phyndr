@@ -42,6 +42,13 @@
 ##' mangled names in the resulting phylogeny.
 ##' @export
 phyndr_taxonomy <- function(phy, data_species, taxonomy) {
+  if (!is.ultrametric(phy)) {
+    stop("phy must be ultrametric")
+  }
+  if (any(is.na(taxonomy))) {
+    stop("Missing values in taxonomy")
+  }
+
   ## Might be worth doing an initial round of cleaning here.
   ## We only need species in the lookup that are in the taxonomy and
   ## in the tree.
