@@ -16,4 +16,25 @@ test_that("phyndr_topology", {
 
   expect_that(res$clades, is_a("list"))
   expect_that(phyndr_n_distinct(res), equals(208))
+
+  expect_that(phyndr_sample(phy), throws_error("Expected a phyndr"))
+  set.seed(1)
+  phy2 <- phyndr_sample(res)
+  expect_that(phy2, not(is_a("phyndr")))
+  expect_that(phy2$clades, is_null())
+  expect_that(phy2$tip.label, not(equals(res$tip.label)))
+
+  expect_that(phyndr_combn(phy), throws_error("Expected a phyndr"))
+  phyl <- phyndr_combn(res)
+  expect_that(phyl, is_a("list"))
+  expect_that(length(phyl), equals(phyndr_n_distinct(res)))
+  expect_that(phyl[[1]], is_a("phylo"))
+  expect_that(phyl[[1]], not(is_a("phyndr")))
+  expect_that(phyl[[1]]$tip.label, not(equals(res$tip.label)))
+
+  ok <- vlapply(phyl, function(x) identical(x$tip.label, res$tip.label))
+  expect_that(sum(ok), equals(1L))
+
+  expect_that(phyndr_combn(res, 10),
+              throws_error("Too many trees would be generated"))
 })
