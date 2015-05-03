@@ -23,9 +23,14 @@ is_monophyletic_group <- function(group, table, phy) {
 ##' @importFrom diversitree get.descendants
 find_paraphyletic <- function(group, table, phy) {
   tips <- phy$tip.label[table == group]
-  mrca <- ape::getMRCA(phy, tips)
-  desc <- diversitree::get.descendants(mrca, phy, tips.only=TRUE)
-  setdiff(table[desc], group)
+  if (length(tips) == 1L) {
+    character(0)
+  } else {
+    tips_i <- match(tips, phy$tip.label)
+    mrca <- diversitree:::mrca.tipset(phy, tips_i)
+    desc <- diversitree::get.descendants(mrca, phy, tips.only=TRUE)
+    setdiff(table[desc], group)
+  }
 }
 
 ## Find the largest clade in phy that includes the tip species `tip`

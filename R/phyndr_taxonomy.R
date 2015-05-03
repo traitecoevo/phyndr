@@ -122,10 +122,14 @@ phyndr_taxonomy <- function(phy, data_species, taxonomy) {
   can_fix <- vlapply(problems, function(x) all(x %in% phy_g_msg_nodata))
   phy_g_msg_data_fixable <- check[can_fix]
 
-  ## Then, of the things with no data and which we don't drop above
+  ## Then, of the things with *no data* and which we don't drop above:
+  ## * Genera that have no data but are in the tree (phy_g_msg_nodata)
+  ## * not things that are going to be removed because of they make
+  ##   other things paraphyletic.
   phy_g_msg_nodata_is_mono <- logical(length(phy_g_msg_nodata))
   names(phy_g_msg_nodata_is_mono) <- phy_g_msg_nodata
-  check <- setdiff(phy_g_msg_nodata, problems)
+  check <- setdiff(phy_g_msg_nodata,
+                   unlist(problems[can_fix]))
   phy_g_msg_nodata_is_mono[check] <-
     vlapply(check, is_monophyletic_group, phy_g, phy)
   phy_g_msg_nodata_mono <- phy_g_msg_nodata[phy_g_msg_nodata_is_mono]
