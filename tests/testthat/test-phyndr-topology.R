@@ -13,4 +13,7 @@ test_that("phyndr_topology", {
 
   res <- phyndr_topology(phy, data_species, topology)
   expect_that(length(res$tip.label), equals(44))
+
+  expect_that(res$clades, is_a("list"))
+  expect_that(phyndr_n_distinct(res), equals(208))
 })

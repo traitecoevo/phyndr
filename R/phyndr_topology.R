@@ -105,7 +105,7 @@ phyndr_topology <- function(phy, data_species, topology) {
 
   clades <- clades[!is_single]
 
-  phy$clade <- clades
+  phy2$clades <- clades
   if (!inherits(phy2, "phyndr")) {
     class(phy2) <- c("phyndr", class(phy2))
   }

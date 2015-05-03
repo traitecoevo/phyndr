@@ -39,6 +39,8 @@ test_that("regression", {
 
   expect_that(length(phy2$tip.label), equals(20))
 
+  expect_that(phyndr_n_distinct(phy), equals(1))
+
   if (FALSE) {
     col <- setNames(rep("black", length(phy2$tip.label)), phy2$tip.label)
     col[names(phy2$clades)] <-
