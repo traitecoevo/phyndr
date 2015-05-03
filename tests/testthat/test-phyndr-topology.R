@@ -27,7 +27,7 @@ test_that("phyndr_topology", {
   set.seed(1)
   tmp <- phyndr_sample_n(res, 5)
   expect_that(tmp[[1]], equals(phy2))
-  expect_that(legth(tmp), equals(1))
+  expect_that(length(tmp), equals(1))
 
   expect_that(phyndr_sample_n(res, 0), is_identical_to(list()))
 

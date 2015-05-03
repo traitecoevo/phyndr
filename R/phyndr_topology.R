@@ -1,6 +1,7 @@
 ##' phyndr for topo trees
 ##' @title phyndr for topo trees
-##' @param phy An ape phylogeny
+##' @param phy An ape phylogeny.  The tree must be ultrametric and
+##' this is enforced on entry.
 ##' @param data_species A vector of species names for which we have
 ##' trait data.  Species names in both the tree and in this vector
 ##' must be separated with underscores, not with spaces.
@@ -11,6 +12,9 @@
 ##' information is not used.
 ##' @export
 phyndr_topology <- function(phy, data_species, topology) {
+  if (!is.ultrametric(phy)) {
+    stop("phy must be ultrametric")
+  }
   ## First, discard all species that are in the time tree but not in
   ## the topo tree and don't have data as these cannot be used.  I
   ## feel we could discard more than this (think of the case of a

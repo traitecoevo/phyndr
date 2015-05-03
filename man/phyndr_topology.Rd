@@ -7,7 +7,8 @@
 phyndr_topology(phy, data_species, topology)
 }
 \arguments{
-\item{phy}{An ape phylogeny}
+\item{phy}{An ape phylogeny.  The tree must be ultrametric and
+this is enforced on entry.}
 
 \item{data_species}{A vector of species names for which we have
 trait data.  Species names in both the tree and in this vector
