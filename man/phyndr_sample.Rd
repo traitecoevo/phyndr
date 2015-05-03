@@ -2,14 +2,21 @@
 % Please edit documentation in R/phyndr.R
 \name{phyndr_sample}
 \alias{phyndr_sample}
+\alias{phyndr_sample_n}
 \title{Sample one distinct set of tip labels from a phyndr tree}
 \usage{
 phyndr_sample(phy)
+
+phyndr_sample_n(phy, n)
 }
 \arguments{
 \item{phy}{A phyndr tree}
+
+\item{n}{Number of trees to generate}
 }
 \description{
-Sample one distinct set of tip labels from a phyndr tree
+Sample distinct set of tip labels from a phyndr tree.
+\code{phyndr_sample} returns a tree (phylo object) while
+\code{phyndr_sample_n} generates a list of trees.
 }
 

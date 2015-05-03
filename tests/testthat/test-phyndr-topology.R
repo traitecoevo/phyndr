@@ -24,6 +24,16 @@ test_that("phyndr_topology", {
   expect_that(phy2$clades, is_null())
   expect_that(phy2$tip.label, not(equals(res$tip.label)))
 
+  set.seed(1)
+  tmp <- phyndr_sample_n(res, 5)
+  expect_that(tmp[[1]], equals(phy2))
+  expect_that(legth(tmp), equals(1))
+
+  expect_that(phyndr_sample_n(res, 0), is_identical_to(list()))
+
+  set.seed(1)
+  expect_that(phyndr_sample_n(res, 1), is_identical_to(list(phy2)))
+
   expect_that(phyndr_combn(phy), throws_error("Expected a phyndr"))
   phyl <- phyndr_combn(res)
   expect_that(phyl, is_a("list"))

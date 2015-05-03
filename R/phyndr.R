@@ -7,7 +7,9 @@ phyndr_n_distinct <- function(phy) {
   prod(viapply(phy$clades, length))
 }
 
-##' Sample one distinct set of tip labels from a phyndr tree
+##' Sample distinct set of tip labels from a phyndr tree.
+##' \code{phyndr_sample} returns a tree (phylo object) while
+##' \code{phyndr_sample_n} generates a list of trees.
 ##' @title Sample one distinct set of tip labels from a phyndr tree
 ##' @param phy A phyndr tree
 ##' @export
@@ -20,6 +22,13 @@ phyndr_sample <- function(phy) {
   phy$clades <- NULL
   class(phy) <- setdiff(class(phy), "phyndr")
   phy
+}
+
+##' @export
+##' @rdname phyndr_sample
+##' @param n Number of trees to generate
+phyndr_sample_n <- function(phy, n) {
+  replicate(n, phyndr_sample(phy), FALSE)
 }
 
 ##' Generate all distinct sets of tip labels from a phyndr tree
