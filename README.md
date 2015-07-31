@@ -6,7 +6,7 @@ Biologists are increasingly using curated, public data sets to conduct phylogene
 
 In this package we have implemented a simple solution to increase the overlap while avoiding potential the biases introduced by imputing data.  If some external topological or taxonomic information is available, this can be used to maximize the overlap between the data and the phylogeny. The algorithms in `phyndr` replace a species lacking data with a species  that has data. This swap can be made because for those two species, all phylogenetic relationships are exactly equivalent.
 
-This project was developed by [Matthew Pennell](www.mwpennell.com) [Rich FitzJohn](http://richfitz.github.io) and [Will Cornwell](http://willcornwell.org).
+This project was developed by [Matthew Pennell](www.mwpennell.com), [Rich FitzJohn](http://richfitz.github.io), and [Will Cornwell](http://willcornwell.org).
 
 ## Installation
 The easiest way to install `phyndr` is to use [`devtools`](https://github.com/hadley/devtools)
