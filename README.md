@@ -12,6 +12,6 @@ This project was developed by [Matthew Pennell](www.mwpennell.com), [Rich FitzJo
 The easiest way to install `phyndr` is to use [`devtools`](https://github.com/hadley/devtools)
 ```
 install.packages("devtools")
-install_github("richfitz/phyndr")
+devtools::install_github("richfitz/phyndr")
 ```
 Eventually, this will be moved to CRAN but for now it is only available on github.
