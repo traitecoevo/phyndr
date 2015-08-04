@@ -2,7 +2,7 @@ Package: phyndr
 Title: Matches Tip and Trait Data
 Version: 0.1.0
 Date: 2015-08-04
-Description: Match tip and trait data
+Description: Use topological or taxonomic information to maximize the overlap of phylogenetic and comparative data.
 Depends: R (>= 3.0)
 License: BSD_2_clause + file LICENSE
 LazyData: true
