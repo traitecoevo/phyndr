@@ -4,11 +4,13 @@ drop_tip <- function(phy, tip, trim.internal = TRUE, subtree = FALSE,
   if (length(tip) == 0L) {
     return(phy)
   }
-  if (!inherits(phy, "phylo"))
+  if (!inherits(phy, "phylo")) {
     stop("object \"phy\" is not of class \"phylo\"")
+  }
   Ntip <- length(phy$tip.label)
-  if (is.character(tip))
+  if (is.character(tip)) {
     tip <- which(phy$tip.label %in% tip)
+  }
   if (!rooted && subtree) {
     phy <- root(phy, (1:Ntip)[-tip][1])
     root.edge <- 0
@@ -26,8 +28,9 @@ drop_tip <- function(phy, tip, trim.internal = TRUE, subtree = FALSE,
   edge1 <- phy$edge[, 1]
   edge2 <- phy$edge[, 2]
   keep <- !logical(Nedge)
-  if (is.character(tip))
+  if (is.character(tip)) {
     tip <- which(phy$tip.label %in% tip)
+  }
   if (!rooted && subtree) {
     phy <- root(phy, (1:Ntip)[-tip][1])
     root.edge <- 0

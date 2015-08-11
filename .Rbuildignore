@@ -1,3 +1,4 @@
 ^\.travis\.yml$
 ^Makefile$
 ^phyndr\.Rproj$
+^phyndr_.*\.tar\.gz$

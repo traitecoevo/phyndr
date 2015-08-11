@@ -30,12 +30,12 @@ get_descendants <- function(node, tree, tips.only=FALSE,
   desc
 }
 
+##' @useDynLib phyndr
 descendants_C <- function(node, edge, n_tip) {
-  ## storage.mode(edge) <- "integer"
-  ## storage.mode(node) <- "integer"
-  ## storage.mode(n_tip) <- "integer"
-  ## .Call("r_descendants", node, edge, n_tip, PACKAGE=.packageName)
-  diversitree:::descendants.C(node, edge, n_tip)
+  storage.mode(edge) <- "integer"
+  storage.mode(node) <- "integer"
+  storage.mode(n_tip) <- "integer"
+  .Call("r_descendants", node, edge, n_tip, PACKAGE="phyndr")
 }
 
 get_descendants_names <- function(node, phy) {
