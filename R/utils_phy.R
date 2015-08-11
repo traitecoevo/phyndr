@@ -9,8 +9,8 @@ is_monophyletic <- function(phy, tips) {
     TRUE
   } else {
     tips_i <- match(tips, phy$tip.label)
-    mrca <- diversitree:::mrca.tipset(phy, tips_i)
-    desc <- diversitree::get.descendants(mrca, phy, tips.only=TRUE)
+    mrca <- mrca_tipset(phy, tips_i)
+    desc <- get_descendants(mrca, phy, tips.only=TRUE)
     all(desc %in% tips_i)
   }
 }
@@ -20,15 +20,14 @@ is_monophyletic_group <- function(group, table, phy) {
 }
 
 ## Find the things that make a group non-monophyletic
-##' @importFrom diversitree get.descendants
 find_paraphyletic <- function(group, table, phy) {
   tips <- phy$tip.label[table == group]
   if (length(tips) == 1L) {
     character(0)
   } else {
     tips_i <- match(tips, phy$tip.label)
-    mrca <- diversitree:::mrca.tipset(phy, tips_i)
-    desc <- diversitree::get.descendants(mrca, phy, tips.only=TRUE)
+    mrca <- mrca_tipset(phy, tips_i)
+    desc <- get_descendants(mrca, phy, tips.only=TRUE)
     setdiff(table[desc], group)
   }
 }
@@ -49,7 +48,7 @@ find_exclusive_clade <- function(tip, exclude, phy) {
         ## Hit the root:
         return(ret)
       }
-      desc <- get_descendants(i_parent, phy)
+      desc <- get_descendants_names(i_parent, phy)
       if (any(desc %in% exclude)) {
         return(ret)
       }
@@ -58,9 +57,4 @@ find_exclusive_clade <- function(tip, exclude, phy) {
       ret <- list(species=desc, node=i)
     }
   }
-}
-
-##' @importFrom diversitree get.descendants
-get_descendants <- function(node, phy) {
-  phy$tip.label[diversitree::get.descendants(node, phy, tips.only=TRUE)]
 }

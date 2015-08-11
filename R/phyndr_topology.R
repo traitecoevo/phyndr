@@ -59,12 +59,12 @@ phyndr_topology <- function(phy, data_species, topology) {
       desc[[nd]] <- unlist(desc[nd_d])
       ## Is it possible that we'll only hit a single species in the
       ## tree?  I hope not!  Might be worth checking though.
-      topo_mrca <- ape::getMRCA(topology, desc[[nd]])
+      topo_mrca <- mrca_tipset(topology, match(desc[[nd]], topology$tip.label))
       if (is.null(topo_mrca)) {
         ## Unlikely to be triggered...
         stop("Error reconciling trees")
       }
-      topo_desc <- get_descendants(topo_mrca, topology)
+      topo_desc <- get_descendants_names(topo_mrca, topology)
       if (any(complete[match(topo_desc, phy$tip.label)], na.rm=TRUE)) {
         complete[[nd]] <- TRUE
       } else {

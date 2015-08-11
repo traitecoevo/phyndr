@@ -8,7 +8,6 @@ test_that("find_exclusive_clade", {
 
   expect_that(intersect(sp$species, exclude), equals(character(0)))
   expect_that(sp$node, equals(188))
-  desc <- phy$tip.label[diversitree::get.descendants(sp$node, phy,
-                                                     tips.only=TRUE)]
+  desc <- phy$tip.label[get_descendants(sp$node, phy, tips.only=TRUE)]
   expect_that(sp$species, equals(desc))
 })
