@@ -9,9 +9,12 @@ In this package we have implemented a simple solution to increase the overlap wh
 This project was developed by [Matthew Pennell](www.mwpennell.com), [Rich FitzJohn](http://richfitz.github.io), and [Will Cornwell](http://willcornwell.org).
 
 ## Installation
-The easiest way to install `phyndr` is to use [`devtools`](https://github.com/hadley/devtools)
+You can install the github version of `phyndr` using [`devtools`](https://github.com/hadley/devtools)
 ```
 install.packages("devtools")
 devtools::install_github("richfitz/phyndr")
 ```
-Eventually, this will be moved to CRAN but for now it is only available on github.
+Or you can install from source [on CRAN](https://cran.r-project.org/web/packages/phyndr/)
+```
+install.packages("phyndr",type="source")
+```
