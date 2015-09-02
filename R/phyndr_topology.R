@@ -10,6 +10,8 @@
 ##' tree is and the better the overlap it has with \code{phy} and
 ##' \code{data_species} the more useful this will be.  Branch length
 ##' information is not used.
+##'
+##' @importFrom stats reorder setNames
 ##' @export
 phyndr_topology <- function(phy, data_species, topology) {
   if (!is.ultrametric(phy)) {

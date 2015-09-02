@@ -40,6 +40,8 @@
 ##' grouping and the last column is the highest (coarsest) taxonomic
 ##' grouping.  The names are arbitrary but will be used in creating
 ##' mangled names in the resulting phylogeny.
+##'
+##' @importFrom stats setNames
 ##' @export
 phyndr_taxonomy <- function(phy, data_species, taxonomy) {
   if (!is.ultrametric(phy)) {
