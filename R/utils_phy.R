@@ -58,24 +58,3 @@ find_exclusive_clade <- function(tip, exclude, phy) {
     }
   }
 }
-
-#'
-sample_phyndr <- function(phy, max_samples=100){
-  ## Takes a phyndr object only
-  if (!inherits(phy, "phyndr"))
-    stop("this function requires an object of class 'phyndr'")
-
-  if (length(phy$clades) > 0){
-    mphy <- lapply(c(1:max_samples), function(x) sample_phyndr_single(phy))
-    mphy <- mphy[!duplicated(mphy)] ## Remove duplicated datasets
-    if (length(mphy) > 1) class(mphy) <- c("list", "multiPhylo")
-    return(mphy)
-  } else {return(phy)}
-}
-
-
-sample_phyndr_single <- function(phy){
-  tips <- sapply(phy$clades, function(x) sample(x, 1))
-  phy$tip.label <- tips
-  phy
-}
