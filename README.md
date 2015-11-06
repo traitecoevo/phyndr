@@ -1,6 +1,6 @@
 # phyndr
 
-[![Build Status](https://travis-ci.org/richfitz/phyndr.png?branch=master)](https://travis-ci.org/richfitz/phyndr)
+[![Build Status](https://travis-ci.org/traitecoevo/phyndr.png?branch=master)](https://travis-ci.org/richfitz/phyndr)
 
 Biologists are increasingly using curated, public data sets to conduct phylogenetic comparative analyses. Unfortunately, there is often a mismatch between species for which there is phylogenetic data and those for which other data is available. As a result, researchers are commonly forced to either drop species from analyses entirely or else impute the missing data.
 
@@ -8,11 +8,13 @@ In this package we have implemented a simple solution to increase the overlap wh
 
 This project was developed by [Matthew Pennell](www.mwpennell.com), [Rich FitzJohn](http://richfitz.github.io), and [Will Cornwell](http://willcornwell.org).
 
+More information about the method is available in a preprint which you can find on [biorxiv](http://biorxiv.org/content/early/2015/08/20/024992) or on [github](https://github.com/traitecoevo/phyndr-ms).
+
 ## Installation
 You can install the github version of `phyndr` using [`devtools`](https://github.com/hadley/devtools)
 ```
 install.packages("devtools")
-devtools::install_github("richfitz/phyndr")
+devtools::install_github("traitecoevo/phyndr")
 ```
 Or you can install from source [on CRAN](https://cran.r-project.org/web/packages/phyndr/)
 ```
