@@ -8,7 +8,7 @@ In this package we have implemented a simple solution to increase the overlap wh
 
 This project was developed by [Matthew Pennell](www.mwpennell.com), [Rich FitzJohn](http://richfitz.github.io), and [Will Cornwell](http://willcornwell.org).
 
-More information about the method is available in a preprint which you can find on [biorxiv](http://biorxiv.org/content/early/2015/08/20/024992) or on [github](https://github.com/traitecoevo/phyndr-ms).
+More information about the method is available in [Pennell et al. 2016 Methods in Ecology and Evolution](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12517/abstract) or on [github](https://github.com/traitecoevo/phyndr-ms).
 
 ## Installation
 You can install the github version of `phyndr` using [`devtools`](https://github.com/hadley/devtools)
